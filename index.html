@@ -61,66 +61,6 @@
         .link-desc { font-size: 12px; color: var(--text-secondary); }
         .arrow { color: var(--text-secondary); opacity: 0.5; flex-shrink: 0; transition: transform 0.2s ease; }
 
-        /* 편지봉투 버튼 */
-        .envelope-btn-wrap {
-            width: 100%; display: flex; flex-direction: column; align-items: center;
-            padding: 8px 0 20px;
-        }
-        .envelope-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            background: none; border: none; cursor: pointer; padding: 16px;
-            border-radius: 20px; -webkit-tap-highlight-color: transparent;
-            animation: float 2.8s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%   { transform: translateY(0px); }
-            50%  { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .envelope-btn.bounce { animation: none; }
-        @keyframes boing {
-            0%   { transform: scale(1); }
-            20%  { transform: scale(0.93); }
-            50%  { transform: scale(1.09); }
-            75%  { transform: scale(0.98); }
-            100% { transform: scale(1); }
-        }
-        .envelope-btn.bounce { animation: boing 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
-        .envelope-icon {
-            width: 72px; height: 72px;
-            filter: drop-shadow(0 4px 12px rgba(201, 168, 76, 0.35));
-        }
-        .envelope-label {
-            font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 600;
-            color: var(--text-secondary); letter-spacing: 0.02em;
-        }
-
-        /* 편지 모달 */
-        .letter-modal {
-            display: none; position: fixed; inset: 0; z-index: 999;
-            background: rgba(0,0,0,0.75);
-            align-items: center; justify-content: center; padding: 8px;
-        }
-        .letter-modal.open { display: flex; }
-        .letter-modal-inner {
-            position: relative; max-width: 600px; width: 100%;
-            animation: pop-in 0.22s ease;
-            margin-top: 20px;
-        }
-        @keyframes pop-in {
-            from { opacity: 0; transform: scale(0.9); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-        .letter-modal img { width: 100%; border-radius: 16px; display: block; }
-        .letter-close {
-            position: absolute; top: 10px; right: 10px;
-            width: 36px; height: 36px; border-radius: 50%;
-            background: rgba(255,255,255,0.9); border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            color: #333; font-size: 18px; line-height: 1; z-index: 1;
-        }
-
         /* 인스타 드롭다운 */
         .insta-wrap { display: flex; flex-direction: column; }
         .insta-toggle { cursor: pointer; user-select: none; transition: border-radius 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease; }
@@ -171,28 +111,9 @@
 <body>
 <div class="page">
     <header class="header">
-        <img src="/vip_image.jpeg" alt="VIP 초청주일 포스터" style="width:100%; border-radius:16px; margin-bottom:8px;">
         <h2 class="church-sub-title" style="color: #6B7280;">2026 VIP 초청주일</h2>
         <h1 class="church-name">"친구야 교회 가자"</h1>
     </header>
-
-    <!-- 편지봉투 버튼 -->
-    <div class="envelope-btn-wrap">
-        <button class="envelope-btn" id="envelope-btn" onclick="handleEnvelope()" aria-label="초대의 글 보기">
-            <svg class="envelope-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="16" width="72" height="48" rx="8" fill="#C9A84C"/>
-                <path d="M4 22L40 46L76 22" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="4" y="16" width="72" height="48" rx="8" fill="url(#env-grad)" opacity="0.2"/>
-                <defs>
-                    <linearGradient id="env-grad" x1="4" y1="16" x2="76" y2="64" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="white"/>
-                        <stop offset="100%" stop-color="transparent"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-            <span class="envelope-label">초대의 글 열기</span>
-        </button>
-    </div>
 
     <nav class="links" aria-label="교회 링크 모음">
 
@@ -279,54 +200,7 @@
     <img src="/logo.png" style="width:200px; margin-top:40px; mix-blend-mode:multiply; opacity:0.8;" alt="발음교회 로고">
 </div>
 
-<!-- 편지 모달 -->
-<div class="letter-modal" id="letter-modal" onclick="closeLetter(event)">
-    <div class="letter-modal-inner">
-        <button class="letter-close" onclick="closeLetter(null)" aria-label="닫기">✕</button>
-        <img src="/pastor_letter.jpeg" alt="담임목사님 초대의 글">
-    </div>
-</div>
-
 <script>
-    // 봉투 애니메이션 + 편지 + 음악
-    var envelopeBtn;
-    window.addEventListener('DOMContentLoaded', function() {
-        envelopeBtn = document.getElementById('envelope-btn');
-        envelopeBtn.addEventListener('animationend', function(e) {
-            if (e.animationName !== 'boing') return;
-            envelopeBtn.classList.remove('bounce');
-            openLetter();
-        });
-    });
-
-    function handleEnvelope() {
-        envelopeBtn.classList.remove('bounce');
-        void envelopeBtn.offsetWidth;
-        envelopeBtn.classList.add('bounce');
-    }
-
-    /*var ytPlayer = null;
-    window.onYouTubeIframeAPIReady = function() {
-        ytPlayer = new YT.Player('yt-player', {
-            height: '0', width: '0',
-            videoId: 'mzAmhcGYZOk',
-            playerVars: { autoplay: 0, controls: 0, loop: 1, playlist: 'mzAmhcGYZOk' },
-            events: { onReady: function() {} }
-        });
-    };*/
-
-    function openLetter() {
-        document.getElementById('letter-modal').classList.add('open');
-        document.body.style.overflow = 'hidden';
-        // if (ytPlayer && typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
-    }
-    function closeLetter(e) {
-        if (e && e.target !== document.getElementById('letter-modal')) return;
-        document.getElementById('letter-modal').classList.remove('open');
-        document.body.style.overflow = '';
-        // 음악은 계속 재생
-    }
-
     function toggleDropdown(btn) {
         const dropdown = btn.nextElementSibling;
         const isOpen = btn.classList.contains('open');
